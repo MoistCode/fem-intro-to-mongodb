@@ -22,30 +22,62 @@ const student = new mongoose.Schema({
         shoeSize: {
             type: Number,
         }
+    },
+    school: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'school',
+        required: true,
     }
-}, { timestamps: true });
+}, {
+    timestamps: true
+});
+
+const school = new mongoose.Schema({
+    name: String,
+    openSince: Number,
+    students: Number,
+    isGreat: Boolean,
+    staff: [{ type: String }]
+});
 
 const Student = mongoose.model('student', student);
+const School = mongoose.model('school', school);
 
 connect()
     .then(async connection => {
-        const student1 = await Student.create({
-            firstName: 'Tommy Pham',
+        // const school1a = await School.create({ name: 'MLK Elementary'});
+        // const student = await Student.create({ firstName: 'Timmy', school: school._id });
+
+        // console.log(student);
+
+        // const match = await Student.findById(student._id)
+        //     .populate('school')
+        //     .exec();
+
+        const school1b = await School.findOneAndUpdate({
+            name: 'MLK Elementary '
+        }, {
+            name: 'MIK Elementary',
+            openSince: 2009,
+            students: 1000,
+            iGreat: true,
+            staff: ['v', 't', 'vdsv', 'cdscs', 'xaxccc'],
+        }, {
+            new: true
+        }, );
+
+        const school2a = School.create({
+            name: 'MILK Elementary',
+            openSince: 20015,
+            students: 500,
+            iGreat: false,
+            staff: ['v', 'w', 'r', 'q', 'a'],
         });
 
-        const student2 = await Student.create({
-            firstName: 'Martha Stewart',
-        });
+        const match = await School.find({
+            staff: '3'
+        }).exec();
 
-        const student3 = await Student.create({
-            firstName: 'Timmy Turner',
-        });
-
-        const foundStudent1 = await Student.find({});
-        const foundStudent2 = await Student.findById(student2._id).exec();
-        const foundStudent3 = await Student.findByIdAndUpdate(student2._id, {firstName: 'Cowman'});
-
-        console.log(foundStudent1);
-        console.log(foundStudent2);
+        console.log(match);
     })
     .catch(e => console.error(e));
